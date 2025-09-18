@@ -4,6 +4,8 @@
 
 ## Summary
 
+⚠️ This is project is unmaintained, because now there are many great alternatives to Oracles JDK. Also Oracle made it really hard to download its JDK. 
+
 Role name in Ansible Galaxy: **[srsp.oracle-java](https://galaxy.ansible.com/srsp/oracle-java/)**
 
 This Ansible role has the following features related to the Oracle JDK:
