@@ -29,6 +29,7 @@
 - name: "Log latest subversion"
   debug:
     msg: "Latest subversion {{ java_latest_subversion[java_version] }}"
+  when: java_latest_subversion[java_version] is defined
 
 - name: Set java subversion
   set_fact:
