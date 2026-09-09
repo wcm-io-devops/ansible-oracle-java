@@ -36,12 +36,14 @@ There are no defaults or known-version lookups. You must always provide:
   vars:
     - java_version: 21
     - java_subversion: "0.6"
+    - jdk_version: "21.0.6"
     - jdk_version_detail: "21.0.6"
     - jdk_file_name: "jdk-{{ jdk_version }}_{{ jdk_os }}-{{ jdk_arch }}_bin"
 ```
 
-- `java_version` / `java_subversion`: used to compute the internal `jdk_version` fact
-  (e.g. `21.0.6`), which is used for install paths and symlinks.
+- `java_version` / `java_subversion`: the Java version being installed.
+- `jdk_version`: used for install paths and symlinks (e.g. `/usr/java/jdk-21.0.6`).
+  No longer derived by the role — set it explicitly.
 - `jdk_version_detail`: the exact upstream version string, used only if you need it in
   your own `jdk_file_name` template.
 - `jdk_file_name`: the file name (without extension) to copy from `files/`. The
@@ -75,6 +77,7 @@ java_set_java_home: true
   vars:
     - java_version: 8
     - java_subversion: 201
+    - jdk_version: "1.8.0_201"
     - jdk_version_detail: "8u201-b09"
     - jdk_file_name: "jdk-8u201-{{ jdk_os }}-{{ jdk_arch }}"
 ```

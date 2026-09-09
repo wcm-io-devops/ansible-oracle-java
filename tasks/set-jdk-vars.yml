@@ -23,22 +23,3 @@
     java_default_link_name: default
     java_home: /usr/java/default
   when: ansible_os_family != "Debian" and ansible_os_family != "Darwin"
-
-## JDK 9 and above
-
-- name: Set general internal variables for java > 8
-  set_fact:
-    jdk_version: "{{ java_version }}"
-  when: java_version > 8 and java_subversion | length == 0
-
-- name: Set general internal variables for java > 8
-  set_fact:
-    jdk_version: "{{ java_version }}.{{ java_subversion }}"
-  when: java_version > 8 and java_subversion | length > 0
-
-## JDK 8
-
-- name: Set general internal variables for java 8
-  set_fact:
-    jdk_version: "1.{{ java_version }}.0_{{ java_subversion }}"
-  when: java_version == 8

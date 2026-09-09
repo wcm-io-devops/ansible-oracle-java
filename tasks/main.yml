@@ -9,6 +9,10 @@
   fail: msg="ERROR - Required variable 'java_subversion' missing."
   when: java_subversion is not defined
 
+- name: Precondition - jdk_version
+  fail: msg="ERROR - Required variable 'jdk_version' missing."
+  when: jdk_version is not defined
+
 - import_tasks: set-platform-vars.yml
 
 - import_tasks: set-jdk-vars.yml
