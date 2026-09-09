@@ -1,7 +1,7 @@
 ---
 galaxy_info:
     author: srsp
-    description: Oracle JDK 8 to 13 for CentOS/Fedora/Debian/Ubuntu/Suse/MacOSX
+    description: Oracle JDK for CentOS/Fedora/Debian/Ubuntu/Suse/MacOSX (local install only)
     license: Apache
 
     min_ansible_version: 2.4.0

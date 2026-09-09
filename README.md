@@ -4,30 +4,28 @@
 
 ## Summary
 
-⚠️ This is project is unmaintained, because now there are many great alternatives to Oracles JDK. Also Oracle made it really hard to download its JDK. 
+⚠️ This is project is unmaintained, because now there are many great alternatives to Oracles JDK. Also Oracle made it really hard to download its JDK.
 
 Role name in Ansible Galaxy: **[srsp.oracle-java](https://galaxy.ansible.com/srsp/oracle-java/)**
 
 This Ansible role has the following features related to the Oracle JDK:
 
- - Install the Oracle JDK in versions 8 to 13.
- - Install the optional Java Cryptography Extensions (JCE). [Only needed for any JDK version <= 8u152.](https://bugs.java.com/view_bug.do?bug_id=JDK-8170157)
+ - Install a locally-provided Oracle JDK archive/package, for any Java version.
  - Install for CentOS, Debian/Ubuntu, SUSE, and macOS operating systems.
 
 This role is based on [williamyeh.oracle-java](https://github.com/William-Yeh/ansible-oracle-java), but I wanted more recent Java versions and decided to drop support for older versions.
 
 If you prefer OpenJDK, try [geerlingguy.java](https://galaxy.ansible.com/geerlingguy/java/).
 
-## Automatic download from Oracle
-**Attention:** Back in the days this role would download all the JDKs directly from the Oracle site. Oracle cut this possibility step by step. Now you cannot download any version of JDK 8 anymore without Oracle login. For JDK 11 you can only download one older version. JDK 13 can be downloaded at the moment.
+## Local-only install
 
-Since this changes non-deterministically every time Oracle releases a new Java version, you should not rely on it. I recommend downloading the JDK manually and installing it by this role.
+**Attention:** Oracle no longer allows deterministic on-the-fly downloads of the JDK, so this role only supports installing a JDK archive/package you already have. Put the downloaded JDK file for your intended system in the `files` directory of the role (or the playbook on the control machine) and provide all the details below — the role does not know about any specific Java version or download location on its own.
 
 ## Role Variables
 
-### Basic usage
+### Required variables
 
-This will try to download the JDK from Oracle and install it.
+There are no defaults or known-version lookups. You must always provide:
 
 ```yaml
 - hosts: all
@@ -36,21 +34,39 @@ This will try to download the JDK from Oracle and install it.
     - srsp.oracle-java
 
   vars:
-    # You should set this:
-    - java_version: 13
-    # You can omit this (role will then use the latest version it knows):
-    - java_subversion: 0.2
+    - java_version: 21
+    - java_subversion: "0.6"
+    - jdk_version_detail: "21.0.6"
+    - jdk_file_name: "jdk-{{ jdk_version }}_{{ jdk_os }}-{{ jdk_arch }}_bin"
 ```
 
+- `java_version` / `java_subversion`: used to compute the internal `jdk_version` fact
+  (e.g. `21.0.6`), which is used for install paths and symlinks.
+- `jdk_version_detail`: the exact upstream version string, used only if you need it in
+  your own `jdk_file_name` template.
+- `jdk_file_name`: the file name (without extension) to copy from `files/`. The
+  extension (`.tar.gz`, `.rpm`, or `.dmg`) is chosen automatically based on target OS
+  and package manager (`jdk_os` and `jdk_arch` are role-internal facts you can
+  reference, as shown above).
+
+### Optional variables
+
+```yaml
+# Where to stage the copied/extracted JDK file on the target host
+java_download_path: /tmp
+
+# Remove temporary downloaded files?
+java_remove_download: true
+
+# Set $JAVA_HOME?
+java_set_java_home: true
+```
 
 ## Examples
 
 ### Install manually downloaded JDK
 
-Put the downloaded JDK file for your intended system in the `files` directory and set `java_download_from` to `local`:
-
 ```yaml
-
 - hosts: all
 
   roles:
@@ -59,36 +75,9 @@ Put the downloaded JDK file for your intended system in the `files` directory an
   vars:
     - java_version: 8
     - java_subversion: 201
-    - java_download_from: local
+    - jdk_version_detail: "8u201-b09"
+    - jdk_file_name: "jdk-8u201-{{ jdk_os }}-{{ jdk_arch }}"
 ```
-
-### Install from your mirror
-
-```yaml
-
-- hosts: all
-
-  roles:
-    - srsp.oracle-java
-
-  vars:
-    - java_version: 8
-    - java_subversion: 172
-    - java_download_from: mirror
-    - java_mirror: "http://some.url/in/your/network/jdk-8u172-macosx-x64.dmg"
-```
-
-### Download JDK to local machine (prefetch)
-
-If you just want the JDK on your local machine (e.g. in order to use the files for the
-molecule test or to upload it to your corporate intranet mirror), you can use the
-`prefetch.yml` playbook in this role:
-
-```bash
-ansible-playbook prefetch.yml
-```
-
-Change the playbook according to your needs.
 
 ### If running from the command line
 
@@ -96,89 +85,6 @@ Change the playbook according to your needs.
 ansible-playbook --ask-become-pass playbook.yml
 ```
 
-### Optional variables
-
-User-configurable defaults:
-
-```yaml
-# Java Version
-java_version: 8
-
-# Java Subversion
-java_subversion: 201
-
-# Whether to download Java from from Oracle directly
-# - oracle: Download from Oracle website on-the-fly.
-# - mirror: Download from the URL defined in 'java_mirror'.
-# - local: Copies from `files` directory of the role or the playbook on the control machine.
-java_download_from: oracle
-
-# Depending on the value of 'java_download_from' different things happen here:
-# - oracle: You don't need to set it. It is prefilled with the Oracle download mirror.
-# - mirror: You need to set it the mirror you want to download from. You need to set the complete URL including the file, like in the example below. If you also want the JCE, you need to set 'jce_zip_url' as well.
-# - local: 'java_mirror' is not used, therefore the value is ignored.
-#java_mirror: "https://private-repo.com/java/jdk-8u172-macosx-x64.dmg"
-java_mirror: "http://download.oracle.com/otn-pub/java"
-
-# Remove temporary downloaded files?
-java_remove_download: true
-
-# Set $JAVA_HOME?
-java_set_java_home: true
-
-# Install JCE?
-java_install_jce: false
-```
-
-For other configurable options, read `tasks/set-role-variables.yml` file; for example, to see supported `java_version`/`java_subversion` combinations.
-
-### I want to install a JDK which you don't yet support!
-
-No problem! You have to specify the corresponding Java build number in the variables `java_build` and `jdk_tarball_hash` in addition to `java_version` and `java_subversion`, for example:
-
-```yaml
-# file: playbook.yml
-- hosts: all
-
-  roles:
-    - srsp.oracle-java
-
-  vars:
-    - java_version: 8
-    - java_subversion: 141
-    - java_build: 15
-    - jdk_tarball_hash: 336fa29ff2bb4ef291e347e091f7f4a7
-```
-
 ## License
 
 Licensed under the Apache License V2.0. See the [LICENSE file](LICENSE) for details.
-
-## Development
-
-### Testing
-
-The tests are using `molecule`. Since this role needs a JDK from Oracle, molecule test
-containers will mount `/tmp/java`, so the JDK is persisted on the local machine and still
-available, when the test container has been destroyed. You can also prefetch the installation file
-and put it to `/tmp/java`.
-
- This will execute the whole test cycle against the default scenario:
-
-```bash
-molecule test
-```
-
-If you want to work on a certain distribution, use something like this:
-
-```bash
-molecule converge --scenario-name opensuse15
-```
-
-If you want to test everything, issue:
-
-```bash
-molecule test --all
-```
-
-This will take a while.

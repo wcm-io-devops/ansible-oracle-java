@@ -2,19 +2,10 @@
 # file: tasks/install.yml
 # Top-level installer for Oracle JDK
 
-- name: Fetch JDK files from Oracle site
-  import_tasks: fetch.yml
-  when: java_download_from == "oracle"
-
-- name: Fetch JDK files from alternative mirror
-  import_tasks: fetch_mirror.yml
-  when: java_download_from == "mirror"
-
 - name: Fetch JDK file from local file system
   copy:
     src: "files/{{ jdk_file_name }}.{{ install_file_extension }}"
     dest: "{{ java_download_path }}/{{ jdk_file_name }}.{{ install_file_extension }}"
-  when: java_download_from == "local"
 
 
 - name: Delegate to RPM installation process
