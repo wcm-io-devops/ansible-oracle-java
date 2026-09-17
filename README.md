@@ -25,31 +25,33 @@ If you prefer OpenJDK, try [geerlingguy.java](https://galaxy.ansible.com/geerlin
 
 ### Required variables
 
-There are no defaults or known-version lookups. You must always provide:
+Only `jdk_version` is required. `java_version`, `java_subversion` and
+`jdk_file_name` are auto-derived from it (see defaults below) and only need to be
+set explicitly to override the default — e.g. for JDK 8's differently-formatted
+version string, or a non-standard file name.
 
 ```yaml
 - hosts: all
 
   roles:
-    - srsp.oracle-java
+    - wcm_io_devops.oracle-java
 
   vars:
-    - java_version: 21
-    - java_subversion: "0.6"
     - jdk_version: "21.0.6"
-    - jdk_version_detail: "21.0.6"
-    - jdk_file_name: "jdk-{{ jdk_version }}_{{ jdk_os }}-{{ jdk_arch }}_bin"
 ```
 
-- `java_version` / `java_subversion`: the Java version being installed.
-- `jdk_version`: used for install paths and symlinks (e.g. `/usr/java/jdk-21.0.6`).
-  No longer derived by the role — set it explicitly.
-- `jdk_version_detail`: the exact upstream version string, used only if you need it in
-  your own `jdk_file_name` template.
-- `jdk_file_name`: the file name (without extension) to copy from `files/`. The
-  extension (`.tar.gz`, `.rpm`, or `.dmg`) is chosen automatically based on target OS
-  and package manager (`jdk_os` and `jdk_arch` are role-internal facts you can
-  reference, as shown above).
+- `jdk_version`: the JDK version to install; used for install paths/symlinks (e.g.
+  `/usr/java/jdk-21.0.6`) and to derive the defaults below.
+- `java_version` (default: the major segment of `jdk_version`, e.g. `21`): used for
+  version-specific logic (JDK 8 installs differently than JDK 9+).
+- `java_subversion` (default: everything after the first `.` in `jdk_version`, e.g.
+  `0.6`): only used on macOS dmg installs.
+- `jdk_file_name` (default: `"jdk-{{ jdk_version }}_{{ jdk_os }}-{{ jdk_arch }}_bin"`,
+  Oracle's standard JDK9+ naming): the file name (without extension) to copy from
+  `files/`. The extension (`.tar.gz`, `.rpm`, or `.dmg`) is chosen automatically based
+  on target OS and package manager (`jdk_os` and `jdk_arch` are role-internal facts).
+- `jdk_version_detail`: not used by the role itself — only needed if you reference it
+  in your own `jdk_file_name` override.
 
 ### Optional variables
 
@@ -66,19 +68,30 @@ java_set_java_home: true
 
 ## Examples
 
-### Install manually downloaded JDK
+### Install manually downloaded JDK (9+, standard Oracle naming)
 
 ```yaml
 - hosts: all
 
   roles:
-    - srsp.oracle-java
+    - wcm_io_devops.oracle-java
 
   vars:
+    - jdk_version: "21.0.6"
+```
+
+### Override for JDK 8 / non-standard file naming
+
+```yaml
+- hosts: all
+
+  roles:
+    - wcm_io_devops.oracle-java
+
+  vars:
+    - jdk_version: "1.8.0_201"
     - java_version: 8
     - java_subversion: 201
-    - jdk_version: "1.8.0_201"
-    - jdk_version_detail: "8u201-b09"
     - jdk_file_name: "jdk-8u201-{{ jdk_os }}-{{ jdk_arch }}"
 ```
 

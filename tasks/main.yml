@@ -1,19 +1,20 @@
 ---
 # Top-level installer for Oracle JDK
 
-- name: Precondition - java_version
-  fail: msg="ERROR - Required variable 'java_version' missing."
-  when: java_version is not defined
-
-- name: Precondition - java_subversion
-  fail: msg="ERROR - Required variable 'java_subversion' missing."
-  when: java_subversion is not defined
-
 - name: Precondition - jdk_version
   fail: msg="ERROR - Required variable 'jdk_version' missing."
   when: jdk_version is not defined
 
+- name: Derive java_version/java_subversion from jdk_version unless explicitly set
+  set_fact:
+    java_version: "{{ java_version if java_version is defined else (jdk_version.split('.')[0] | int) }}"
+    java_subversion: "{{ java_subversion if java_subversion is defined else jdk_version.split('.', 1)[1] }}"
+
 - import_tasks: set-platform-vars.yml
+
+- name: Derive jdk_file_name (standard Oracle JDK9+ naming) unless explicitly set
+  set_fact:
+    jdk_file_name: "{{ jdk_file_name if jdk_file_name is defined else 'jdk-' ~ jdk_version ~ '_' ~ jdk_os ~ '-' ~ jdk_arch ~ '_bin' }}"
 
 - import_tasks: set-jdk-vars.yml
 

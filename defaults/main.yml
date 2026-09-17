@@ -2,7 +2,8 @@
 # Variables needed to be defined in user's playbook
 # User-configurable defaults
 
-# java_version and java_subversion are required, no defaults are provided.
+# jdk_version (e.g. "21.0.6") is required; java_version, java_subversion and
+# jdk_file_name are auto-derived from it unless explicitly overridden.
 
 java_download_path: /tmp
 
