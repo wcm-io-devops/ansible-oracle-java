@@ -36,33 +36,19 @@
 - block:
     # No link creation is necessary on Mac OS X --
     # the package installer automatically creates symlinks in /usr/bin.
-    - name: Link "{{ java_install_dir }}/{{ java_default_link_name }} on RPM based systems for JDK8"
-      file:
-        src: "{{ java_install_dir }}/jdk{{ jdk_version }}-amd64"
-        dest: "{{ java_install_dir }}/{{ java_default_link_name }}"
-        state: link
-      when: java_version == 8 and use_rpm
-
-    - name: Link "{{ java_install_dir }}/{{ java_default_link_name }} on non-RPM based systems for JDK8"
-      file:
-        src: "{{ java_install_dir }}/jdk{{ jdk_version }}"
-        dest: "{{ java_install_dir }}/{{ java_default_link_name }}"
-        state: link
-      when: java_version == 8 and use_tarball
-
-    - name: Link "{{ java_install_dir }}/{{ java_default_link_name }} on RPM based systems for JDK > 8"
+    - name: Link "{{ java_install_dir }}/{{ java_default_link_name }} on RPM based systems"
       file:
         src: "{{ java_install_dir }}/jdk-{{ jdk_version }}"
         dest: "{{ java_install_dir }}/{{ java_default_link_name }}"
         state: link
-      when: java_version != 8 and use_rpm
+      when: use_rpm
 
-    - name: Link "{{ java_install_dir }}/{{ java_default_link_name }} on non-RPM based systems for JDK > 8"
+    - name: Link "{{ java_install_dir }}/{{ java_default_link_name }} on non-RPM based systems"
       file:
         src: "{{ java_install_dir }}/jdk-{{ jdk_version }}"
         dest: "{{ java_install_dir }}/{{ java_default_link_name }}"
         state: link
-      when: java_version != 8 and use_tarball
+      when: use_tarball
 
     - name: Alternatives link for "java"
       alternatives:

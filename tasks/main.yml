@@ -1,19 +1,67 @@
 ---
 # Top-level installer for Oracle JDK
 
-- name: Precondition - java_version
-  fail: msg="ERROR - Required variable 'java_version' missing."
-  when: java_version is not defined
-
-- name: Precondition - java_subversion
-  fail: msg="ERROR - Required variable 'java_subversion' missing."
-  when: java_subversion is not defined
-
 - name: Precondition - jdk_version
   fail: msg="ERROR - Required variable 'jdk_version' missing."
   when: jdk_version is not defined
 
+- name: Precondition - jdk_version format
+  fail:
+    msg: >-
+      ERROR - jdk_version must be a string in MAJOR.MINOR.PATCH format (e.g.
+      '21.0.6'), got '{{ jdk_version }}'.
+  when: (jdk_version | string) is not match('^[0-9]+\.[0-9]+\.[0-9]+$')
+
+- name: Precondition - minimum supported Java version
+  fail:
+    msg: >-
+      ERROR - Java versions before 11 are EOL and not supported by this role
+      (got jdk_version={{ jdk_version }}).
+  when: ((jdk_version | string).split('.')[0] | int) < 11
+
+- name: Precondition - java_version override must match jdk_version
+  fail:
+    msg: >-
+      ERROR - java_version={{ java_version }} conflicts with
+      jdk_version={{ jdk_version }}; use a matching major version or omit
+      java_version.
+  when:
+    - java_version is defined
+    - (java_version | int) != ((jdk_version | string).split('.')[0] | int)
+
+- name: Precondition - macOS Java 11/12 requires explicit java_subversion
+  fail:
+    msg: >-
+      ERROR - macOS Java 11/12 installs require java_subversion to be set
+      explicitly so the dmg/pkg naming matches your installer
+      (got jdk_version={{ jdk_version }}).
+  when:
+    - ansible_os_family == 'Darwin'
+    - ((jdk_version | string).split('.')[0] | int) in [11, 12]
+    - java_subversion is not defined
+
+- name: Derive java_version from jdk_version unless explicitly set
+  set_fact:
+    java_version: "{{ (java_version | int) if java_version is defined else ((jdk_version | string).split('.')[0] | int) }}"
+
+- name: Preserve explicit java_subversion override
+  set_fact:
+    java_subversion: "{{ java_subversion }}"
+  when: java_subversion is defined
+
+- name: Derive java_subversion from jdk_version for macOS Java 13+ installs
+  set_fact:
+    java_subversion: "{{ (jdk_version | string).split('.', 1)[1] }}"
+  when:
+    - java_subversion is not defined
+    - ansible_os_family == 'Darwin'
+    - ((jdk_version | string).split('.')[0] | int) > 12
+
 - import_tasks: set-platform-vars.yml
+
+- name: Derive jdk_file_name (standard Oracle JDK9+ naming) unless explicitly set
+  set_fact:
+    jdk_file_name: "{{ jdk_file_name if jdk_file_name is defined else 'jdk-' ~ jdk_version ~ '_' ~ jdk_os ~ '-' ~ jdk_arch ~ '_bin' }}"
 
 - import_tasks: set-jdk-vars.yml
 
