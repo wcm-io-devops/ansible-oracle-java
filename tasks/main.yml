@@ -42,7 +42,7 @@
 
 - name: Derive java_version/java_subversion from jdk_version unless explicitly set
   set_fact:
-    java_version: "{{ (java_version | int) if java_version is defined else ((jdk_version | string).split('.')[0] | int) }}"
+    java_version: "{{ java_version if java_version is defined else ((jdk_version | string).split('.')[0] | int) }}"
     java_subversion: "{{ java_subversion if java_subversion is defined else (jdk_version | string).split('.', 1)[1] }}"
 
 - import_tasks: set-platform-vars.yml
