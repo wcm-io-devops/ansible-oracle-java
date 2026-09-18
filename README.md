@@ -25,11 +25,11 @@ If you prefer OpenJDK, try [geerlingguy.java](https://galaxy.ansible.com/geerlin
 
 ### Required variables
 
-Only `jdk_version` is required. `java_version`, `java_subversion` and
-`jdk_file_name` are auto-derived from it (see defaults below) and only need to be
-set explicitly to override the default — e.g. for a non-standard file name.
-Only Java 11 and above is supported; earlier versions are EOL and rejected with
-an error.
+Only `jdk_version` is required for Java 11+ installs. `java_version`,
+`java_subversion` and `jdk_file_name` are auto-derived from it (see defaults
+below) and only need to be set explicitly to override the default — e.g. for a
+non-standard file name. Legacy JDK 8 installs remain possible only when all
+three of those variables are still set explicitly.
 
 ```yaml
 - hosts: all
@@ -47,7 +47,9 @@ an error.
   version-specific logic (e.g. the macOS pkg naming and dmg volume differ across
   releases).
 - `java_subversion` (default: everything after the first `.` in `jdk_version`, e.g.
-  `0.6`): only used on macOS dmg installs.
+  `0.6`): only used on macOS dmg installs. For Java versions below 13, the macOS
+  installer uses this as the `Update <subversion>` segment, so legacy JDKs such
+  as `1.8.0_201` must override `java_subversion` explicitly.
 - `jdk_file_name` (default: `"jdk-{{ jdk_version }}_{{ jdk_os }}-{{ jdk_arch }}_bin"`,
   Oracle's standard JDK9+ naming): the file name (without extension) to copy from
   `files/`. The extension (`.tar.gz`, `.rpm`, or `.dmg`) is chosen automatically based
