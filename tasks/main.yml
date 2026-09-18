@@ -19,6 +19,16 @@
       (got jdk_version={{ jdk_version }}).
   when: ((jdk_version | string).split('.')[0] | int) < 11
 
+- name: Precondition - java_version override must match jdk_version
+  fail:
+    msg: >-
+      ERROR - java_version={{ java_version }} conflicts with
+      jdk_version={{ jdk_version }}; use a matching major version or omit
+      java_version.
+  when:
+    - java_version is defined
+    - (java_version | int) != ((jdk_version | string).split('.')[0] | int)
+
 - name: Derive java_version/java_subversion from jdk_version unless explicitly set
   set_fact:
     java_version: "{{ (java_version | int) if java_version is defined else ((jdk_version | string).split('.')[0] | int) }}"
