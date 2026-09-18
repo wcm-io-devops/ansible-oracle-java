@@ -3,7 +3,10 @@
 
 - name: Set Java architecture
   set_fact:
-    jdk_arch: "{{ 'i586' if ansible_architecture == 'i386' else 'x64' }}"
+    jdk_arch: >-
+      {{ 'i586' if ansible_architecture == 'i386'
+         else ('x64' if ansible_architecture == 'x86_64'
+         else ansible_architecture) }}
 
 # OS
 
