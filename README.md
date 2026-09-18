@@ -1,7 +1,5 @@
 # wcm_io_devops.oracle-java
 
-[![Build Status](https://travis-ci.org/srsp/ansible-oracle-java.svg?branch=master)](https://travis-ci.org/srsp/ansible-oracle-java)
-
 ## Summary
 
 This is a [wcm-io-devops](https://github.com/wcm-io-devops) fork of the (unmaintained) upstream `srsp.oracle-java` role, kept up because Oracle made it really hard to deterministically download its JDK.
