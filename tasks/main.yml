@@ -5,6 +5,10 @@
   fail: msg="ERROR - Required variable 'jdk_version' missing."
   when: jdk_version is not defined
 
+- name: Precondition - jdk_version format
+  fail: msg="ERROR - jdk_version must be in MAJOR.MINOR.PATCH format (e.g. '21.0.6'), got '{{ jdk_version }}'."
+  when: "'.' not in jdk_version"
+
 - name: Precondition - minimum supported Java version
   fail: msg="ERROR - Java versions before 11 are EOL and not supported by this role (got jdk_version={{ jdk_version }})."
   when: (jdk_version.split('.')[0] | int) < 11

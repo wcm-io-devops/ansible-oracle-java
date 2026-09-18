@@ -1,12 +1,12 @@
-# srsp.oracle-java for Ansible Galaxy
+# wcm_io_devops.oracle-java
 
 [![Build Status](https://travis-ci.org/srsp/ansible-oracle-java.svg?branch=master)](https://travis-ci.org/srsp/ansible-oracle-java)
 
 ## Summary
 
-⚠️ This is project is unmaintained, because now there are many great alternatives to Oracles JDK. Also Oracle made it really hard to download its JDK.
+This is a [wcm-io-devops](https://github.com/wcm-io-devops) fork of the (unmaintained) upstream `srsp.oracle-java` role, kept up because Oracle made it really hard to deterministically download its JDK.
 
-Role name in Ansible Galaxy: **[srsp.oracle-java](https://galaxy.ansible.com/srsp/oracle-java/)**
+Role name: **`wcm_io_devops.oracle-java`** (installed via this repository's git URL in `requirements.yml`; not published on Ansible Galaxy).
 
 This Ansible role has the following features related to the Oracle JDK:
 
