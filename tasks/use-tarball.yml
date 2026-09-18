@@ -12,16 +12,6 @@
     mode: "u=rwx,go=rx"
   become: true
 
-- name: Make directory for specific Java version
-  file:
-    path: "{{ java_install_dir }}/jdk{{ jdk_version }}"
-    state: directory
-    owner: root
-    group: root
-    mode: "u=rwx,go=rx"
-  become: true
-  when: java_version == 8
-
 - name: Install JDK via tarball file
   unarchive:
     src: "{{ java_download_path }}/{{ jdk_file_name }}.{{ install_file_extension }}"

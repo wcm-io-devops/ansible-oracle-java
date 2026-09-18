@@ -10,7 +10,7 @@ Role name in Ansible Galaxy: **[srsp.oracle-java](https://galaxy.ansible.com/srs
 
 This Ansible role has the following features related to the Oracle JDK:
 
- - Install a locally-provided Oracle JDK archive/package, for any Java version.
+ - Install a locally-provided Oracle JDK archive/package, for any Java version from 11 onwards (earlier versions are EOL and rejected).
  - Install for CentOS, Debian/Ubuntu, SUSE, and macOS operating systems.
 
 This role is based on [williamyeh.oracle-java](https://github.com/William-Yeh/ansible-oracle-java), but I wanted more recent Java versions and decided to drop support for older versions.
@@ -27,8 +27,9 @@ If you prefer OpenJDK, try [geerlingguy.java](https://galaxy.ansible.com/geerlin
 
 Only `jdk_version` is required. `java_version`, `java_subversion` and
 `jdk_file_name` are auto-derived from it (see defaults below) and only need to be
-set explicitly to override the default — e.g. for JDK 8's differently-formatted
-version string, or a non-standard file name.
+set explicitly to override the default — e.g. for a non-standard file name.
+Only Java 11 and above is supported; earlier versions are EOL and rejected with
+an error.
 
 ```yaml
 - hosts: all
@@ -37,13 +38,14 @@ version string, or a non-standard file name.
     - wcm_io_devops.oracle-java
 
   vars:
-    - jdk_version: "21.0.6"
+    jdk_version: "21.0.6"
 ```
 
 - `jdk_version`: the JDK version to install; used for install paths/symlinks (e.g.
   `/usr/java/jdk-21.0.6`) and to derive the defaults below.
 - `java_version` (default: the major segment of `jdk_version`, e.g. `21`): used for
-  version-specific logic (JDK 8 installs differently than JDK 9+).
+  version-specific logic (e.g. the macOS pkg naming and dmg volume differ across
+  releases).
 - `java_subversion` (default: everything after the first `.` in `jdk_version`, e.g.
   `0.6`): only used on macOS dmg installs.
 - `jdk_file_name` (default: `"jdk-{{ jdk_version }}_{{ jdk_os }}-{{ jdk_arch }}_bin"`,
@@ -68,7 +70,7 @@ java_set_java_home: true
 
 ## Examples
 
-### Install manually downloaded JDK (9+, standard Oracle naming)
+### Install manually downloaded JDK (standard Oracle naming)
 
 ```yaml
 - hosts: all
@@ -77,10 +79,10 @@ java_set_java_home: true
     - wcm_io_devops.oracle-java
 
   vars:
-    - jdk_version: "21.0.6"
+    jdk_version: "21.0.6"
 ```
 
-### Override for JDK 8 / non-standard file naming
+### Override jdk_file_name (e.g. custom/internal mirror naming)
 
 ```yaml
 - hosts: all
@@ -89,10 +91,8 @@ java_set_java_home: true
     - wcm_io_devops.oracle-java
 
   vars:
-    - jdk_version: "1.8.0_201"
-    - java_version: 8
-    - java_subversion: 201
-    - jdk_file_name: "jdk-8u201-{{ jdk_os }}-{{ jdk_arch }}"
+    jdk_version: "17.0.9"
+    jdk_file_name: "openjdk-17.0.9_{{ jdk_os }}-{{ jdk_arch }}_bin"
 ```
 
 ### If running from the command line

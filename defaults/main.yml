@@ -4,6 +4,7 @@
 
 # jdk_version (e.g. "21.0.6") is required; java_version, java_subversion and
 # jdk_file_name are auto-derived from it unless explicitly overridden.
+# Only Java 11+ is supported; earlier versions are EOL and rejected.
 
 java_download_path: /tmp
 

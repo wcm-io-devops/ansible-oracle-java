@@ -5,6 +5,10 @@
   fail: msg="ERROR - Required variable 'jdk_version' missing."
   when: jdk_version is not defined
 
+- name: Precondition - minimum supported Java version
+  fail: msg="ERROR - Java versions before 11 are EOL and not supported by this role (got jdk_version={{ jdk_version }})."
+  when: (jdk_version.split('.')[0] | int) < 11
+
 - name: Derive java_version/java_subversion from jdk_version unless explicitly set
   set_fact:
     java_version: "{{ java_version if java_version is defined else (jdk_version.split('.')[0] | int) }}"
