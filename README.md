@@ -8,7 +8,7 @@ Role name: **`wcm_io_devops.oracle-java`** (installed via this repository's git 
 
 This Ansible role has the following features related to the Oracle JDK:
 
- - Install a locally-provided Oracle JDK archive/package, for any Java version from 11 onwards (earlier versions are EOL and rejected).
+ - Install a locally-provided Oracle JDK archive/package for Java 11+ when `jdk_version` is provided in `MAJOR.MINOR.PATCH` format (earlier versions are EOL and rejected).
  - Install for CentOS, Debian/Ubuntu, SUSE, and macOS operating systems.
 
 This role is based on [williamyeh.oracle-java](https://github.com/William-Yeh/ansible-oracle-java), but I wanted more recent Java versions and decided to drop support for older versions.
