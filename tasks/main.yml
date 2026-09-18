@@ -47,6 +47,17 @@
 
 - import_tasks: set-platform-vars.yml
 
+- name: Precondition - unsupported architecture requires explicit jdk_file_name
+  fail:
+    msg: >-
+      ERROR - cannot reliably derive jdk_file_name for
+      ansible_architecture={{ ansible_architecture }} (only 'i386' and
+      'x86_64' are auto-mapped to a jdk_arch); set jdk_file_name explicitly
+      for this architecture.
+  when:
+    - jdk_file_name is not defined
+    - ansible_architecture not in ['i386', 'x86_64']
+
 - name: Derive jdk_file_name (standard Oracle JDK9+ naming) unless explicitly set
   set_fact:
     jdk_file_name: "{{ jdk_file_name if jdk_file_name is defined else 'jdk-' ~ jdk_version ~ '_' ~ jdk_os ~ '-' ~ jdk_arch ~ '_bin' }}"

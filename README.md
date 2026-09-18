@@ -54,7 +54,9 @@ with an error.
   `files/`. On macOS, `jdk_os` resolves to `macosx` for Java 11/12 installers and
   `osx` for Java 13+ installers. The extension (`.tar.gz`, `.rpm`, or `.dmg`) is
   chosen automatically based on target OS and package manager (`jdk_os` and
-  `jdk_arch` are role-internal facts).
+  `jdk_arch` are role-internal facts). `jdk_arch` is only auto-mapped for
+  `i386`/`x86_64`; on other architectures (e.g. ARM64) the role fails fast and
+  requires `jdk_file_name` to be set explicitly.
 - `jdk_version_detail`: not used by the role itself — only needed if you reference it
   in your own `jdk_file_name` override.
 
