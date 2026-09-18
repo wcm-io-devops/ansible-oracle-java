@@ -49,12 +49,13 @@
     java_subversion: "{{ java_subversion }}"
   when: java_subversion is defined
 
-- name: Derive java_subversion from jdk_version unless explicit input is required
+- name: Derive java_subversion from jdk_version for macOS Java 13+ installs
   set_fact:
     java_subversion: "{{ (jdk_version | string).split('.', 1)[1] }}"
   when:
     - java_subversion is not defined
-    - ansible_os_family != 'Darwin' or ((jdk_version | string).split('.')[0] | int) not in [11, 12]
+    - ansible_os_family == 'Darwin'
+    - ((jdk_version | string).split('.')[0] | int) > 12
 
 - import_tasks: set-platform-vars.yml
 

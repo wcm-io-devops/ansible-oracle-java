@@ -45,11 +45,11 @@ are EOL and rejected with an error.
 - `java_version` (default: the major segment of `jdk_version`, e.g. `21`): used for
   version-specific logic (e.g. the macOS pkg naming and dmg volume differ across
   releases).
-- `java_subversion` (default: everything after the first `.` in `jdk_version`,
-  e.g. `0.6`): only used by the macOS installer naming logic. For Java 11/12
-  on macOS, this variable is required and must be set explicitly to match the
-  update segment used by your downloaded dmg/pkg; the generic default is not
-  sufficient for those installers.
+- `java_subversion` (default on macOS Java 13+: everything after the first `.`
+  in `jdk_version`, e.g. `0.6`): only used by the macOS installer naming
+  logic. For Java 11/12 on macOS, there is no usable default: this variable is
+  required and must be set explicitly to match the update segment used by your
+  downloaded dmg/pkg.
 - `jdk_file_name` (default: `"jdk-{{ jdk_version }}_{{ jdk_os }}-{{ jdk_arch }}_bin"`,
   Oracle's standard JDK9+ naming): the file name (without extension) to copy from
   `files/`. On macOS, `jdk_os` resolves to `macosx` for Java 11/12 installers and
