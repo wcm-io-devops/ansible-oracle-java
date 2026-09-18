@@ -40,10 +40,21 @@
     - ((jdk_version | string).split('.')[0] | int) in [11, 12]
     - java_subversion is not defined
 
-- name: Derive java_version/java_subversion from jdk_version unless explicitly set
+- name: Derive java_version from jdk_version unless explicitly set
   set_fact:
     java_version: "{{ (java_version | int) if java_version is defined else ((jdk_version | string).split('.')[0] | int) }}"
-    java_subversion: "{{ java_subversion if java_subversion is defined else (jdk_version | string).split('.', 1)[1] }}"
+
+- name: Preserve explicit java_subversion override
+  set_fact:
+    java_subversion: "{{ java_subversion }}"
+  when: java_subversion is defined
+
+- name: Derive java_subversion from jdk_version unless explicit input is required
+  set_fact:
+    java_subversion: "{{ (jdk_version | string).split('.', 1)[1] }}"
+  when:
+    - java_subversion is not defined
+    - ansible_os_family != 'Darwin' or ((jdk_version | string).split('.')[0] | int) not in [11, 12]
 
 - import_tasks: set-platform-vars.yml
 
