@@ -9,19 +9,15 @@
   fail:
     msg: >-
       ERROR - jdk_version must be a string in MAJOR.MINOR.PATCH format (e.g.
-      '21.0.6'); legacy JDK 8 values must use the '1.8.0_201' form (got
-      '{{ jdk_version }}').
-  when: (jdk_version | string) is not match('^[0-9]+\\.[0-9]+\\.[0-9]+(?:_[0-9]+)?$')
+      '21.0.6'), got '{{ jdk_version }}'.
+  when: (jdk_version | string) is not match('^[0-9]+\\.[0-9]+\\.[0-9]+$')
 
-- name: Precondition - legacy JDK versions require explicit overrides
+- name: Precondition - minimum supported Java version
   fail:
     msg: >-
-      ERROR - Java versions before 11 are EOL; if you still need a legacy JDK,
-      set java_version, java_subversion, and jdk_file_name explicitly (got
-      jdk_version={{ jdk_version }}).
-  when:
-    - ((jdk_version | string).split('.')[0] | int) < 11
-    - java_version is not defined or java_subversion is not defined or jdk_file_name is not defined
+      ERROR - Java versions before 11 are EOL and not supported by this role
+      (got jdk_version={{ jdk_version }}).
+  when: ((jdk_version | string).split('.')[0] | int) < 11
 
 - name: Derive java_version/java_subversion from jdk_version unless explicitly set
   set_fact:
