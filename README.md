@@ -23,11 +23,12 @@ If you prefer OpenJDK, try [geerlingguy.java](https://galaxy.ansible.com/geerlin
 
 ### Required variables
 
-Only `jdk_version` is required. `java_version`, `java_subversion` and
-`jdk_file_name` are auto-derived from it (see defaults below) and only need to
-be set explicitly to override the default — e.g. for a non-standard file name.
-Only Java 11 and above are supported; earlier versions are EOL and rejected
-with an error.
+`jdk_version` is the only required variable in the common case. `java_version`,
+`java_subversion` and `jdk_file_name` are auto-derived from it (see defaults
+below) and only need to be set explicitly to override the default — e.g. for a
+non-standard file name. On macOS with Java 11/12 installers, `java_subversion`
+must be set explicitly. Only Java 11 and above are supported; earlier versions
+are EOL and rejected with an error.
 
 ```yaml
 - hosts: all
@@ -44,11 +45,11 @@ with an error.
 - `java_version` (default: the major segment of `jdk_version`, e.g. `21`): used for
   version-specific logic (e.g. the macOS pkg naming and dmg volume differ across
   releases).
-- `java_subversion` (default: everything after the first `.` in `jdk_version`, e.g.
-  `0.6`): only used by the macOS installer naming logic. For Java 11/12 on
-  macOS, set this explicitly to match the update segment used by your
-  downloaded dmg/pkg; the generic default is not sufficient for those
-  installers.
+- `java_subversion` (default: everything after the first `.` in `jdk_version`,
+  e.g. `0.6`): only used by the macOS installer naming logic. For Java 11/12
+  on macOS, this variable is required and must be set explicitly to match the
+  update segment used by your downloaded dmg/pkg; the generic default is not
+  sufficient for those installers.
 - `jdk_file_name` (default: `"jdk-{{ jdk_version }}_{{ jdk_os }}-{{ jdk_arch }}_bin"`,
   Oracle's standard JDK9+ naming): the file name (without extension) to copy from
   `files/`. On macOS, `jdk_os` resolves to `macosx` for Java 11/12 installers and
