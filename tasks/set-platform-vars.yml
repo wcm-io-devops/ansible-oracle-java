@@ -14,7 +14,7 @@
 
 - name: Set Java OS for Mac OS X
   set_fact:
-    jdk_os: "{{ 'macosx' if ((java_version | int) == 11 or (java_version | int) == 12) else 'osx' }}"
+    jdk_os: "{{ 'macosx' if (java_version | int) in [11, 12] else 'osx' }}"
   when: ansible_os_family == 'Darwin'
 
 # Installation binary
