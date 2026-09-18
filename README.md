@@ -52,8 +52,10 @@ with an error.
   downloaded dmg/pkg does not follow the role's default naming convention.
 - `jdk_file_name` (default: `"jdk-{{ jdk_version }}_{{ jdk_os }}-{{ jdk_arch }}_bin"`,
   Oracle's standard JDK9+ naming): the file name (without extension) to copy from
-  `files/`. The extension (`.tar.gz`, `.rpm`, or `.dmg`) is chosen automatically based
-  on target OS and package manager (`jdk_os` and `jdk_arch` are role-internal facts).
+  `files/`. On macOS, `jdk_os` resolves to `macosx` for Java 11/12 installers and
+  `osx` for Java 13+ installers. The extension (`.tar.gz`, `.rpm`, or `.dmg`) is
+  chosen automatically based on target OS and package manager (`jdk_os` and
+  `jdk_arch` are role-internal facts).
 - `jdk_version_detail`: not used by the role itself — only needed if you reference it
   in your own `jdk_file_name` override.
 
