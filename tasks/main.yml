@@ -29,6 +29,17 @@
     - java_version is defined
     - (java_version | int) != ((jdk_version | string).split('.')[0] | int)
 
+- name: Precondition - macOS Java 11/12 requires explicit java_subversion
+  fail:
+    msg: >-
+      ERROR - macOS Java 11/12 installs require java_subversion to be set
+      explicitly so the dmg/pkg naming matches your installer
+      (got jdk_version={{ jdk_version }}).
+  when:
+    - ansible_os_family == 'Darwin'
+    - ((jdk_version | string).split('.')[0] | int) in [11, 12]
+    - java_subversion is not defined
+
 - name: Derive java_version/java_subversion from jdk_version unless explicitly set
   set_fact:
     java_version: "{{ (java_version | int) if java_version is defined else ((jdk_version | string).split('.')[0] | int) }}"
