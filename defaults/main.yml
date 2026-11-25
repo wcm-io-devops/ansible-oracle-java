@@ -2,7 +2,7 @@
 # Variables needed to be defined in user's playbook
 # User-configurable defaults
 
-# jdk_version (e.g. "21.0.6") is required; java_version, java_subversion and
+# jdk_version (e.g. "21.0.6" or "21.0.13.1") is required; java_version, java_subversion and
 # jdk_file_name are auto-derived from it unless explicitly overridden.
 # Only Java 11+ is supported; earlier versions are EOL and rejected.
 
