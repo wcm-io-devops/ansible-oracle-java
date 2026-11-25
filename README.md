@@ -8,7 +8,7 @@ Role name: **`wcm_io_devops.oracle-java`** (installed via this repository's git 
 
 This Ansible role has the following features related to the Oracle JDK:
 
- - Install a locally-provided Oracle JDK archive/package for Java 11+ when `jdk_version` is provided in `MAJOR.MINOR.PATCH` format (earlier versions are EOL and rejected).
+ - Install a locally-provided Oracle JDK archive/package for Java 11+ when `jdk_version` is provided in `MAJOR.MINOR.PATCH` format, optionally with a fourth segment for out-of-band security builds such as `21.0.13.1` (earlier versions are EOL and rejected).
  - Install for CentOS, Debian/Ubuntu, SUSE, and macOS operating systems.
 
 This role is based on [williamyeh.oracle-java](https://github.com/William-Yeh/ansible-oracle-java), but I wanted more recent Java versions and decided to drop support for older versions.
@@ -41,7 +41,10 @@ are EOL and rejected with an error.
 ```
 
 - `jdk_version`: the JDK version to install; used for install paths/symlinks (e.g.
-  `/usr/java/jdk-21.0.6`) and to derive the defaults below.
+  `/usr/java/jdk-21.0.6`) and to derive the defaults below. Format
+  `MAJOR.MINOR.PATCH` or `MAJOR.MINOR.PATCH.EMERGENCY` (e.g. `21.0.13.1`). The
+  role expects the archive to extract to `jdk-<jdk_version>` and the JDK to
+  report `<jdk_version>` in `java -version`.
 - `java_version` (default: the major segment of `jdk_version`, e.g. `21`): used for
   version-specific logic (e.g. the macOS pkg naming and dmg volume differ across
   releases).

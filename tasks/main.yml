@@ -8,9 +8,10 @@
 - name: Precondition - jdk_version format
   fail:
     msg: >-
-      ERROR - jdk_version must be a string in MAJOR.MINOR.PATCH format (e.g.
-      '21.0.6'), got '{{ jdk_version }}'.
-  when: (jdk_version | string) is not match('^[0-9]+\.[0-9]+\.[0-9]+$')
+      ERROR - jdk_version must be a string in MAJOR.MINOR.PATCH or
+      MAJOR.MINOR.PATCH.EMERGENCY format (e.g. '21.0.6' or '21.0.13.1'),
+      got '{{ jdk_version }}'.
+  when: (jdk_version | string) is not match('^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$')
 
 - name: Precondition - minimum supported Java version
   fail:
